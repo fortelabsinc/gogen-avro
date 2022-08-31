@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"github.com/actgardner/gogen-avro/v10/container"
+	"github.com/fortelabsinc/gogen-avro/v10/container"
 
 	"github.com/linkedin/goavro/v2"
 	"github.com/stretchr/testify/assert"
@@ -125,7 +125,6 @@ func RoundTripExactBytes(t *testing.T, recordFunc RecordFactory, deserMethod Des
 // RoundTrip tests that:
 // - gogen-avro can decode avro-enocded data from goavro and the Go data is identical
 // - goavro can decode JSON-encoded data from gogen-avro and the Go data is identical
-//
 func RoundTrip(t *testing.T, recordFunc RecordFactory, deserMethod DeserMethod) {
 	schema, err := LoadTestSchema()
 	assert.NoError(t, err)

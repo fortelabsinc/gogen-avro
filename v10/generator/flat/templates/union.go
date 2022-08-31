@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/actgardner/gogen-avro/v10/vm"
-	"github.com/actgardner/gogen-avro/v10/compiler"
-	"github.com/actgardner/gogen-avro/v10/vm/types"
+	"github.com/fortelabsinc/gogen-avro/v10/vm"
+	"github.com/fortelabsinc/gogen-avro/v10/compiler"
+	"github.com/fortelabsinc/gogen-avro/v10/vm/types"
 )
 
 
@@ -145,16 +145,16 @@ func (_ {{ .GoType }}) AppendArray() types.Field { panic("Unsupported operation"
 func (_ {{ .GoType }}) Finalize()  { }
 
 func (r {{ .GoType }}) MarshalJSON() ([]byte, error) {
-	{{ if ne .NullIndex -1 }}
+	{{ if ne .NullIndex -1 -}}
 	if r == nil {
 		return []byte("null"), nil
 	}
-	{{ end }}
+	{{ end -}}
 	switch r.UnionType{
 	{{ range $i, $t := .ItemTypes -}}
 	{{ if ne $i $.NullIndex -}}
 	case {{ $.ItemName $t }}:
-		return json.Marshal(map[string]interface{}{"{{ .UnionKey }}": r.{{ .Name }}})
+		return json.Marshal(r.{{ .Name }})
         {{ end -}}
 	{{ end -}}
 	}
@@ -162,26 +162,15 @@ func (r {{ .GoType }}) MarshalJSON() ([]byte, error) {
 }
 
 
-{{ if ne .NullIndex -1 }}
+{{ if ne .NullIndex -1 -}}
 func (r {{ .GoType }}) UnmarshalJSON(data []byte) (error) {
-{{ else }}
+{{ else -}}
 func (r *{{ .GoType }}) UnmarshalJSON(data []byte) (error) {
-{{ end }}
-	var fields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &fields); err != nil {
-		return err
-	}
-	if len(fields) > 1 {
-		return fmt.Errorf("more than one type supplied for union")
-	}
+{{ end -}}
 	{{ range $i, $t := .ItemTypes -}}
 	{{ if ne $i $.NullIndex -}}
-	if value,  ok := fields["{{ .UnionKey }}"]; ok {
-		r.UnionType = {{ $i }}
-		return json.Unmarshal([]byte(value), &r.{{ .Name }})
-	}
-        {{ end -}}
+	r.UnionType = {{ $i }}
+	return json.Unmarshal(data, &r.{{ .Name }})
 	{{ end -}}
-	return fmt.Errorf("invalid value for {{ .GoType }}")
-}
-`
+	{{ end -}}
+}`

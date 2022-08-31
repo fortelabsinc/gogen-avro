@@ -6,8 +6,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/actgardner/gogen-avro/v10/container"
-	"github.com/actgardner/gogen-avro/v10/test"
+	"github.com/fortelabsinc/gogen-avro/v10/container"
+	"github.com/fortelabsinc/gogen-avro/v10/test"
 )
 
 func TestRoundTrip(t *testing.T) {

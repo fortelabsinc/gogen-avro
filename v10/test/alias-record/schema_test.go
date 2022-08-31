@@ -4,9 +4,9 @@ import (
 	"io"
 	"testing"
 
-	"github.com/actgardner/gogen-avro/v10/container"
-	"github.com/actgardner/gogen-avro/v10/test"
-	evolution "github.com/actgardner/gogen-avro/v10/test/alias-record/evolution"
+	"github.com/fortelabsinc/gogen-avro/v10/container"
+	"github.com/fortelabsinc/gogen-avro/v10/test"
+	evolution "github.com/fortelabsinc/gogen-avro/v10/test/alias-record/evolution"
 )
 
 func TestRoundTrip(t *testing.T) {

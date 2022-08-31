@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"text/template"
 
-	avro "github.com/actgardner/gogen-avro/v10/schema"
-	"github.com/actgardner/gogen-avro/v10/schema/canonical"
+	avro "github.com/fortelabsinc/gogen-avro/v10/schema"
+	"github.com/fortelabsinc/gogen-avro/v10/schema/canonical"
 )
 
 var NoTemplateForType = fmt.Errorf("No template exists for supplied type")
@@ -50,6 +50,7 @@ func Evaluate(templateStr string, obj interface{}) (string, error) {
 		},
 		"isNullable":     isNullable,
 		"hasNullDefault": hasNullDefault,
+		"isUnion":        isUnion,
 	}).Parse(templateStr)
 	if err != nil {
 		return "", err
@@ -79,4 +80,9 @@ func hasNullDefault(t avro.AvroType) bool {
 		return union.NullIndex() == 0
 	}
 	return false
+}
+
+func isUnion(t avro.AvroType) bool {
+	_, ok := t.(*avro.UnionField)
+	return ok
 }

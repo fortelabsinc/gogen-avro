@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/actgardner/gogen-avro/v10/vm/types"
-	"github.com/actgardner/gogen-avro/v10/vm"
-	"github.com/actgardner/gogen-avro/v10/compiler"
+	"github.com/fortelabsinc/gogen-avro/v10/vm/types"
+	"github.com/fortelabsinc/gogen-avro/v10/vm"
+	"github.com/fortelabsinc/gogen-avro/v10/compiler"
 )
 
 var _ = fmt.Printf
@@ -187,16 +187,26 @@ func (r *{{ .GoType }}) UnmarshalJSON(data []byte) (error) {
 		return nil
 	}()
 
-	if val != nil {
+	if val != nil && string(val) != "null" {
+		{{ if (isUnion $field.Type) -}}
+		{{ $.ConstructableForField $field -}}
+		if err := r.{{$field.GoName}}.UnmarshalJSON([]byte(val)); err != nil {
+			return err
+		}
+		{{ else -}}
 		if err := json.Unmarshal([]byte(val), &r.{{ $field.GoName}}); err != nil {
 			return err
 		}
-	} else {
-        	{{ if .HasDefault -}}
-		{{ if $.ConstructableForField $field | ne "" -}}
-		{{ $.ConstructableForField $field }}
 		{{ end -}}
-       	 	{{ $.DefaultForField $field }}
+	} else {
+		{{ if .HasDefault -}}
+		{{ if $.ConstructableForField $field | ne "" -}}
+		{{ if not (isUnion $field.Type) }}
+		{{ $.ConstructableForField $field -}}
+        {{ end -}}
+		{{ else -}}
+		{{ $.DefaultForField $field -}}
+		{{ end -}}
 		{{ else -}}
 		return fmt.Errorf("no value specified for {{ $field.Name }}")
 		{{ end -}}
