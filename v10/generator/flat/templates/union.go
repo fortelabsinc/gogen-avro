@@ -171,6 +171,7 @@ func (r *{{ .GoType }}) UnmarshalJSON(data []byte) (error) {
 	{{ if ne $i $.NullIndex -}}
 	r.UnionType = {{ $i }}
 	return json.Unmarshal(data, &r.{{ .Name }})
+    {{ break -}}
 	{{ end -}}
 	{{ end -}}
 }`
